@@ -1,0 +1,27 @@
+{
+  "name": "busboy-wrapper",
+  "description": "busboy wrapper for multipart uploads",
+  "keywords": "file upload multipart busboy",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jameskyburz/busboy-wrapper.git"
+  },
+  "author": {
+    "name": "James Kyburz",
+    "email": "james.kyburz@gmail.com"
+  },
+  "main": "index.js",
+  "version": "1.0.0",
+  "scripts": {
+    "prepublish": "standard"
+  },
+  "dependencies": {
+    "busboy": "0.2.12",
+    "debug": "2.2.0",
+    "uuid": "2.0.1"
+  },
+  "devDependencies": {
+    "standard": "5.4.1"
+  },
+  "license": "MIT"
+}
