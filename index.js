@@ -8,8 +8,15 @@ var fs = require('fs')
 
 module.exports = wrapper
 
-function wrapper (q, cb) {
+function wrapper (q, opt, cb) {
   var busboy = new BusBoy({ headers: q.headers })
+
+  if (typeof opt === 'function') {
+    cb = opt
+    opt = {}
+  }
+
+  opt = opt || {}
 
   var fields = {}
   var files = {}
@@ -27,7 +34,7 @@ function wrapper (q, cb) {
 
     var time = new Date()
 
-    var tmpFile = path.join(os.tmpDir(), uuid.v4())
+    var tmpFile = path.join(opt.tempUploadDir || os.tmpDir(), uuid.v4())
     var writeTo = fs.createWriteStream(tmpFile)
     writeTo.on('finish', () => {
       filesWritten++
