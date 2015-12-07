@@ -26,7 +26,7 @@ function wrapper (q, opt, cb) {
   var filesWritten = 0
   var fileCount = 0
 
-  busboy.on('file', (field, file) => {
+  busboy.on('file', (field, file, name) => {
     fileCount++
     var size = 0
     var sha1 = crypto.createHash('sha1')
@@ -34,7 +34,7 @@ function wrapper (q, opt, cb) {
 
     var time = new Date()
 
-    var tmpFile = path.join(opt.tempUploadDir || os.tmpDir(), uuid.v4())
+    var tmpFile = path.join(opt.tempUploadDir || os.tmpDir(), uuid.v4()) + path.extname(name)
     var writeTo = fs.createWriteStream(tmpFile)
     writeTo.on('finish', () => {
       filesWritten++
