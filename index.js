@@ -5,6 +5,7 @@ var path = require('path')
 var uuid = require('uuid')
 var os = require('os')
 var fs = require('fs')
+var once = require('once')
 
 module.exports = wrapper
 
@@ -16,6 +17,7 @@ function wrapper (q, opt, cb) {
     opt = {}
   }
 
+  cb = once(cb)
   opt = opt || {}
 
   var fields = {}
@@ -61,8 +63,9 @@ function wrapper (q, opt, cb) {
   busboy.on('finish', finished)
 
   function finished () {
-    if (fileCount === filesWritten) {
+    if (fileCount === filesWritten && !finished.written) {
       cb(null, fields, files)
+      finished.written = true
     }
   }
 
@@ -71,7 +74,8 @@ function wrapper (q, opt, cb) {
   function assertError (err) {
     if (!err) return
     debug('%s error occured %j', q.url, err)
+    if (assertError.written) return
     cb(err)
-    return true
+    assertError.written = true
   }
 }
