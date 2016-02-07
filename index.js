@@ -23,7 +23,9 @@ function wrapper (q, opt, cb) {
   var fields = {}
   var files = {}
 
-  busboy.on('field', (name, value) => fields[name] = value)
+  busboy.on('field', (name, value) => {
+    fields[name] = value
+  })
 
   var filesWritten = 0
   var fileCount = 0
@@ -52,7 +54,7 @@ function wrapper (q, opt, cb) {
     })
     file.on('error', assertError)
     writeTo.on('error', assertError)
-    file.on('data', data => {
+    file.on('data', (data) => {
       sha1.write(data)
       writeTo.write(data)
       size += data.length
