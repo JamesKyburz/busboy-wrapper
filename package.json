@@ -22,7 +22,7 @@
     "uuid": "2.0.2"
   },
   "devDependencies": {
-    "standard": "6.0.8"
+    "standard": "7.0.0"
   },
   "license": "MIT"
 }
