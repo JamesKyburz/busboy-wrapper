@@ -62,12 +62,13 @@ function wrapper (q, opt, cb) {
     file.on('end', writeTo.end.bind(writeTo))
   })
 
-  busboy.on('finish', finished)
-
-  function finished () {
-    if (fileCount === filesWritten && !finished.written) {
+  busboy.on('finish', finished.bind(null, true))
+  function finished (parseComplete) {
+    if (parseComplete) finished.parseComplete = true
+    if (fileCount === filesWritten && !finished.written && finished.parseComplete) {
       cb(null, fields, files)
       finished.written = true
+      debug('%s completed %j', q.url, { fields: fields, files: files })
     }
   }
 
