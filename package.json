@@ -16,7 +16,7 @@
     "prepublish": "standard"
   },
   "dependencies": {
-    "busboy": "0.2.13",
+    "busboy": "0.2.14",
     "debug": "2.6.0",
     "once": "1.4.0",
     "uuid": "3.0.1"
