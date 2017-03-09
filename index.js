@@ -38,7 +38,7 @@ function wrapper (q, opt, cb) {
 
     var time = new Date()
 
-    var tmpFile = path.join(opt.tempUploadDir || os.tmpDir(), uuid.v4()) + path.extname(name)
+    var tmpFile = path.join(opt.tempUploadDir || os.tmpdir(), uuid.v4()) + path.extname(name)
     var writeTo = fs.createWriteStream(tmpFile)
     writeTo.on('finish', () => {
       filesWritten++
