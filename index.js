@@ -1,16 +1,16 @@
-var BusBoy = require('busboy')
-var debug = require('debug')('busboy:upload')
-var crypto = require('crypto')
-var path = require('path')
-var uuid = require('uuid')
-var os = require('os')
-var fs = require('fs')
-var once = require('once')
+const BusBoy = require('busboy')
+const debug = require('debug')('busboy:upload')
+const crypto = require('crypto')
+const path = require('path')
+const uuid = require('uuid')
+const os = require('os')
+const fs = require('fs')
+const once = require('once')
 
 module.exports = wrapper
 
 function wrapper (q, opt, cb) {
-  var busboy = new BusBoy({ headers: q.headers })
+  const busboy = new BusBoy({ headers: q.headers })
 
   if (typeof opt === 'function') {
     cb = opt
@@ -20,26 +20,26 @@ function wrapper (q, opt, cb) {
   cb = once(cb)
   opt = opt || {}
 
-  var fields = {}
-  var files = {}
+  const fields = {}
+  const files = {}
 
   busboy.on('field', (name, value) => {
     fields[name] = value
   })
 
-  var filesWritten = 0
-  var fileCount = 0
+  let filesWritten = 0
+  let fileCount = 0
 
   busboy.on('file', (field, file, name) => {
     fileCount++
-    var size = 0
-    var sha1 = crypto.createHash('sha1')
+    let size = 0
+    const sha1 = crypto.createHash('sha1')
     sha1.setEncoding('hex')
 
-    var time = new Date()
+    const time = new Date()
 
-    var tmpFile = path.join(opt.tempUploadDir || os.tmpdir(), uuid.v4()) + path.extname(name)
-    var writeTo = fs.createWriteStream(tmpFile)
+    const tmpFile = path.join(opt.tempUploadDir || os.tmpdir(), uuid.v4()) + path.extname(name)
+    const writeTo = fs.createWriteStream(tmpFile)
     writeTo.on('finish', () => {
       filesWritten++
       sha1.end()
@@ -49,7 +49,7 @@ function wrapper (q, opt, cb) {
         hash: sha1.read()
       }
       finished()
-      var took = new Date() - time
+      const took = new Date() - time
       debug('%s file %s uploaded took %s ms', q.url, field, took)
     })
     file.on('error', assertError)
