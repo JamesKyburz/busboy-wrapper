@@ -14,7 +14,7 @@
   "version": "1.0.23",
   "scripts": {
     "prepublish": "standard",
-    "test": "tape test.js | tap-spec"
+    "test": "tape test.js | faucet"
   },
   "dependencies": {
     "busboy": "0.2.14",
