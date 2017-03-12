@@ -13,7 +13,8 @@
   "main": "index.js",
   "version": "1.0.22",
   "scripts": {
-    "prepublish": "standard"
+    "prepublish": "standard",
+    "test": "tape test.js | tap-spec"
   },
   "dependencies": {
     "busboy": "0.2.14",
@@ -22,7 +23,11 @@
     "uuid": "3.0.1"
   },
   "devDependencies": {
-    "standard": "9.0.0"
+    "concat-stream": "1.6.0",
+    "faucet": "0.0.1",
+    "form-data": "2.1.2",
+    "standard": "9.0.0",
+    "tape": "4.6.3"
   },
   "license": "MIT"
 }
