@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "busboy": "0.2.14",
-    "debug": "2.6.4",
+    "debug": "2.6.5",
     "once": "1.4.0",
     "uuid": "3.0.1"
   },
