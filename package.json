@@ -14,7 +14,7 @@
   "version": "1.0.34",
   "scripts": {
     "prepublish": "standard",
-    "test": "tape test.js | faucet"
+    "test": "tape test.js | tap-spec"
   },
   "dependencies": {
     "busboy": "0.2.14",
@@ -24,9 +24,9 @@
   },
   "devDependencies": {
     "concat-stream": "1.6.0",
-    "faucet": "0.0.1",
     "form-data": "2.2.0",
     "standard": "10.0.2",
+    "tap-spec": "4.1.1",
     "tape": "4.6.3",
     "test-listen-destroy": "1.0.0"
   },
