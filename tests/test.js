@@ -2,7 +2,7 @@ const test = require('tape')
 const FormData = require('form-data')
 const fs = require('fs')
 const concat = require('concat-stream')
-const busboy = require('./')
+const busboy = require('../')
 const listen = require('test-listen-destroy')
 const fn = (req, res) => {
   busboy(req, (err, fields, files) => {
