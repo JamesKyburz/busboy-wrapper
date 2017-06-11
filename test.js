@@ -1,34 +1,28 @@
-const http = require('http')
 const test = require('tape')
 const FormData = require('form-data')
 const fs = require('fs')
 const concat = require('concat-stream')
 const busboy = require('./')
-
-test('start server', (t) => {
-  http.createServer((q, r) => {
-    if (q.url === '/upload') {
-      busboy(q, (err, fields, files) => {
-        if (err) {
-          r.writeHead(500)
-          r.end(err.toString())
-        } else {
-          r.end(JSON.stringify({ fields, files }))
-        }
-      })
-      return
+const listen = require('test-listen-destroy')
+const fn = (req, res) => {
+  busboy(req, (err, fields, files) => {
+    if (err) {
+      res.writeHead(500)
+      res.end(err.toString())
+    } else {
+      res.end(JSON.stringify({ fields, files }))
     }
-    r.end()
   })
-  .listen(1234, t.end)
-})
+}
 
-test('upload license file', (t) => {
+test('upload license file', async (t) => {
   const form = new FormData()
   form.append('field', 'test')
   form.append('license', fs.createReadStream('./LICENSE'))
 
-  form.submit('http://localhost:1234/upload', (err, res) => {
+  const url = await listen(fn)
+
+  form.submit(url, (err, res) => {
     t.error(err, 'server returned a reponse')
     t.equals(res.statusCode, 200, 'server response is 200')
     res.pipe(concat((result) => {
@@ -45,12 +39,14 @@ test('upload license file', (t) => {
   })
 })
 
-test('multipart with fields and no file', (t) => {
+test('multipart with fields and no file', async (t) => {
   const form = new FormData()
   form.append('field1', 'test1')
   form.append('field2', 'test2')
 
-  form.submit('http://localhost:1234/upload', (err, res) => {
+  const url = await listen(fn)
+
+  form.submit(url, (err, res) => {
     t.error(err, 'server returned a reponse')
     t.equals(res.statusCode, 200, 'server response is 200')
     res.pipe(concat((result) => {
@@ -65,12 +61,14 @@ test('multipart with fields and no file', (t) => {
   })
 })
 
-test('upload 2 files', (t) => {
+test('upload 2 files', async (t) => {
   const form = new FormData()
   form.append('license', fs.createReadStream('./LICENSE'))
   form.append('.gitignore', fs.createReadStream('./.gitignore'))
 
-  form.submit('http://localhost:1234/upload', (err, res) => {
+  const url = await listen(fn)
+
+  form.submit(url, (err, res) => {
     t.error(err, 'server returned a reponse')
     t.equals(res.statusCode, 200, 'server response is 200')
     res.pipe(concat((result) => {
@@ -87,9 +85,4 @@ test('upload 2 files', (t) => {
     }))
     res.resume()
   })
-})
-
-test('end server', (t) => {
-  process.nextTick(process.exit.bind(process, 0))
-  t.end()
 })

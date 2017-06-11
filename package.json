@@ -27,7 +27,8 @@
     "faucet": "0.0.1",
     "form-data": "2.2.0",
     "standard": "10.0.2",
-    "tape": "4.6.3"
+    "tape": "4.6.3",
+    "test-listen-destroy": "1.0.0"
   },
   "license": "MIT"
 }
