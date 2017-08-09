@@ -11,7 +11,7 @@
     "email": "james.kyburz@gmail.com"
   },
   "main": "src/index.js",
-  "version": "1.0.38",
+  "version": "1.0.39",
   "scripts": {
     "prepublish": "standard",
     "test": "tape ./tests/* | tap-spec"
