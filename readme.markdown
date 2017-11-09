@@ -11,12 +11,11 @@ busboy multi part file wrapper
 http-server.js:
 
 ```javascript
-var busboy = require('busboy-wrapper')
+const busboy = require('busboy-wrapper')
 function upload (q, r) {
-  busboy(q, (err, fields, files) => {
+  busboy(q, (err, fields, files, encoding, mimetype) => {
   })
 }
-
 ```
 # install
 
