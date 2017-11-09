@@ -23,6 +23,12 @@ function wrapper (q, opt, cb) {
   const fields = {}
   const files = {}
 
+  const createHash = opt.createHash || (() => {
+    const sha1 = crypto.createHash('sha1')
+    sha1.setEncoding('hex')
+    return sha1
+  })
+
   busboy.on('field', (name, value) => {
     fields[name] = value
   })
@@ -33,8 +39,8 @@ function wrapper (q, opt, cb) {
   busboy.on('file', (field, file, name, encoding, mimetype) => {
     fileCount++
     let size = 0
-    const sha1 = crypto.createHash('sha1')
-    sha1.setEncoding('hex')
+
+    const hash = createHash()
 
     const time = new Date()
 
@@ -42,12 +48,12 @@ function wrapper (q, opt, cb) {
     const writeTo = fs.createWriteStream(tmpFile)
     writeTo.on('finish', () => {
       filesWritten++
-      sha1.end()
+      hash.end()
       files[field] = {
         name,
         path: tmpFile,
         size,
-        hash: sha1.read(),
+        hash: hash.read(),
         encoding,
         mimetype
       }
@@ -58,7 +64,7 @@ function wrapper (q, opt, cb) {
     file.on('error', assertError)
     writeTo.on('error', assertError)
     file.on('data', (data) => {
-      sha1.write(data)
+      hash.write(data)
       writeTo.write(data)
       size += data.length
     })

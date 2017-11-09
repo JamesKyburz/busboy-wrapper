@@ -4,8 +4,10 @@ const fs = require('fs')
 const concat = require('concat-stream')
 const busboy = require('../')
 const listen = require('test-listen-destroy')
-const fn = (req, res) => {
-  busboy(req, (err, fields, files) => {
+const crypto = require('crypto')
+
+const fn = (req, res, opt = {}) => {
+  busboy(req, opt, (err, fields, files) => {
     if (err) {
       res.writeHead(500)
       res.end(err.toString())
@@ -14,6 +16,7 @@ const fn = (req, res) => {
     }
   })
 }
+const ssri = require('ssri')
 
 test('upload license file', async (t) => {
   const form = new FormData()
@@ -109,6 +112,58 @@ test('encoding and mimetype', async (t) => {
       t.equals(json.files['readme.markdown'].encoding, '7bit', 'readme mimetype')
       t.equals(json.files['image.jpg'].mimetype, 'image/jpeg', 'image mimetype')
       t.equals(json.files['image.jpg'].encoding, '7bit', 'image mimetype')
+      t.end()
+    }))
+    res.resume()
+  })
+})
+
+test('custom hash with ssri', async (t) => {
+  const form = new FormData()
+  form.append('license', fs.createReadStream('./LICENSE'), 'LICENSE')
+
+  const url = await listen((req, res) => fn(req, res, {
+    createHash () {
+      const integrity = ssri.create()
+      let hash
+      return {
+        write (data) { integrity.update(data) },
+        end () { hash = integrity.digest().toString() },
+        read () { return hash }
+      }
+    }
+  }))
+
+  form.submit(url, (err, res) => {
+    t.error(err, 'server returned a reponse')
+    t.equals(res.statusCode, 200, 'server response is 200')
+    res.pipe(concat((result) => {
+      const json = JSON.parse(result)
+      t.equals(json.files.license.hash, 'sha512-gXfBuvgk+pEQjYxFnX4J+4jGSLkxxgwe0xufjULsQCjqXF26HkJV0KYXx8Uxl1Ta/dZfURsRbXlAOir+AM07Zw==', 'license hash is correct')
+      t.end()
+    }))
+    res.resume()
+  })
+})
+
+test('custom hash with sha256', async (t) => {
+  const form = new FormData()
+  form.append('license', fs.createReadStream('./LICENSE'), 'LICENSE')
+
+  const url = await listen((req, res) => fn(req, res, {
+    createHash () {
+      const sha256 = crypto.createHash('sha256')
+      sha256.setEncoding('hex')
+      return sha256
+    }
+  }))
+
+  form.submit(url, (err, res) => {
+    t.error(err, 'server returned a reponse')
+    t.equals(res.statusCode, 200, 'server response is 200')
+    res.pipe(concat((result) => {
+      const json = JSON.parse(result)
+      t.equals(json.files.license.hash, 'a48cdb5cf55019972cab469173b77bb8adf67e6c9757e428018c4255649856f2', 'license hash is correct')
       t.end()
     }))
     res.resume()
