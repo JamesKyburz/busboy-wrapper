@@ -44,6 +44,7 @@ function wrapper (q, opt, cb) {
       filesWritten++
       sha1.end()
       files[field] = {
+        name: name,
         path: tmpFile,
         size: size,
         hash: sha1.read()
