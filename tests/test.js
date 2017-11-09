@@ -82,8 +82,33 @@ test('upload 2 files', async (t) => {
       t.equals(json.files.license.size, 1816, 'license size is correct')
       t.equals(json.files['.gitignore'].name, '.gitignore', '.gitignore name is correct')
       t.ok(json.files['.gitignore'].path, '.gitignore path is set')
-      t.equals(json.files['.gitignore'].hash, 'ff380f2f53c3fe4926936611cfbeda4296a539bc', '.gitignore hash is correct')
-      t.equals(json.files['.gitignore'].size, 36, '.gitignore size is correct')
+      t.equals(json.files['.gitignore'].hash, 'b026f212ac92d67fd5cdcce2ef34f1a3b15c3de5', '.gitignore hash is correct')
+      t.equals(json.files['.gitignore'].size, 37, '.gitignore size is correct')
+      t.end()
+    }))
+    res.resume()
+  })
+})
+
+test('encoding and mimetype', async (t) => {
+  const form = new FormData()
+  form.append('license', fs.createReadStream('./LICENSE'), 'LICENSE')
+  form.append('readme.markdown', fs.createReadStream('./readme.markdown'), 'readme.markdown')
+  form.append('image.jpg', fs.createReadStream('./tests/image.jpg'), 'image.jpg')
+
+  const url = await listen(fn)
+
+  form.submit(url, (err, res) => {
+    t.error(err, 'server returned a reponse')
+    t.equals(res.statusCode, 200, 'server response is 200')
+    res.pipe(concat((result) => {
+      const json = JSON.parse(result)
+      t.equals(json.files['license'].mimetype, 'application/octet-stream', 'license mimetype')
+      t.equals(json.files['readme.markdown'].mimetype, 'text/x-markdown', 'readme mimetype')
+      t.equals(json.files['license'].encoding, '7bit', 'license mimetype')
+      t.equals(json.files['readme.markdown'].encoding, '7bit', 'readme mimetype')
+      t.equals(json.files['image.jpg'].mimetype, 'image/jpeg', 'image mimetype')
+      t.equals(json.files['image.jpg'].encoding, '7bit', 'image mimetype')
       t.end()
     }))
     res.resume()

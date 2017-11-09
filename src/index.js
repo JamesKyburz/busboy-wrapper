@@ -30,7 +30,7 @@ function wrapper (q, opt, cb) {
   let filesWritten = 0
   let fileCount = 0
 
-  busboy.on('file', (field, file, name) => {
+  busboy.on('file', (field, file, name, encoding, mimetype) => {
     fileCount++
     let size = 0
     const sha1 = crypto.createHash('sha1')
@@ -44,10 +44,12 @@ function wrapper (q, opt, cb) {
       filesWritten++
       sha1.end()
       files[field] = {
-        name: name,
+        name,
         path: tmpFile,
-        size: size,
-        hash: sha1.read()
+        size,
+        hash: sha1.read(),
+        encoding,
+        mimetype
       }
       finished()
       const took = new Date() - time

@@ -14,7 +14,7 @@
   "version": "1.0.40",
   "scripts": {
     "prepublish": "standard",
-    "test": "tape ./tests/* | tap-spec"
+    "test": "tape ./tests/*.js | tap-spec"
   },
   "dependencies": {
     "busboy": "0.2.14",
