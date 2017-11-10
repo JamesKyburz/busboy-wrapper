@@ -44,7 +44,7 @@ function wrapper (q, opt, cb) {
 
     const time = new Date()
 
-    const tmpFile = path.join(opt.tempUploadDir || os.tmpdir(), uuid.v4()) + path.extname(name)
+    const tmpFile = path.join(opt.tempUploadDir || os.tmpdir(), uuid.v4()) + path.extname(name || field)
     const writeTo = fs.createWriteStream(tmpFile)
     writeTo.on('finish', () => {
       filesWritten++
