@@ -9,12 +9,12 @@ const http = require('http')
 const { parse: urlParse } = require('url')
 
 const fn = (req, res, opt = {}) => {
-  busboy(req, opt, (err, fields, files) => {
+  busboy(req, opt, (err, payload) => {
     if (err) {
       res.writeHead(500)
       res.end(err.toString())
     } else {
-      res.end(JSON.stringify({ fields, files }))
+      res.end(JSON.stringify(payload))
     }
   })
 }

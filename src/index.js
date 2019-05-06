@@ -92,7 +92,7 @@ function wrapper (q, opt, cb) {
       !finished.written &&
       finished.parseComplete
     ) {
-      cb(null, fields, files)
+      cb(null, { fields, files })
       finished.written = true
       debug('%s completed %j', q.url, { fields: fields, files: files })
     }
