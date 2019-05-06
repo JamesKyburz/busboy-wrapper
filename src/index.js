@@ -9,7 +9,7 @@ const once = require('once')
 
 module.exports = wrapper
 
-function wrapper (q, opt, cb) {
+function wrapper (req, opt, cb) {
   if (typeof opt === 'function') {
     cb = opt
     opt = {}
@@ -21,7 +21,7 @@ function wrapper (q, opt, cb) {
   let busboy
 
   try {
-    busboy = new BusBoy({ headers: q.headers })
+    busboy = new BusBoy({ headers: req.headers })
   } catch (err) {
     cb(err)
     return
@@ -72,7 +72,7 @@ function wrapper (q, opt, cb) {
       }
       finished()
       const took = new Date() - time
-      debug('%s file %s uploaded took %s ms', q.url, field, took)
+      debug('%s file %s uploaded took %s ms', req.url, field, took)
     })
     file.on('error', assertError)
     writeTo.on('error', assertError)
@@ -94,15 +94,15 @@ function wrapper (q, opt, cb) {
     ) {
       cb(null, { fields, files })
       finished.written = true
-      debug('%s completed %j', q.url, { fields: fields, files: files })
+      debug('%s completed %j', req.url, { fields: fields, files: files })
     }
   }
 
-  q.pipe(busboy)
+  req.pipe(busboy)
 
   function assertError (err) {
     if (!err) return
-    debug('%s error occured %j', q.url, err)
+    debug('%s error occured %j', req.url, err)
     if (assertError.written) return
     cb(err)
     assertError.written = true
