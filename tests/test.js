@@ -18,6 +18,15 @@ const fn = (req, res, opt = {}) => {
     }
   })
 }
+
+const fnPromise = (req, res, opt = {}) => {
+  busboy(req, opt)
+    .then(payload => res.end(JSON.stringify(payload)))
+    .catch(err => {
+      res.writeHead(500)
+      res.end(err.toString())
+    })
+}
 const ssri = require('ssri')
 
 test('upload license file', async t => {
@@ -26,6 +35,43 @@ test('upload license file', async t => {
   form.append('license', fs.createReadStream('./LICENSE'), 'LICENSE')
 
   const url = await listen(fn)
+
+  await new Promise((resolve, reject) => {
+    form.submit(url, (err, res) => {
+      if (err) return reject(err)
+      t.equals(res.statusCode, 200, 'server response is 200')
+      res.pipe(
+        concat(result => {
+          const json = JSON.parse(result)
+          t.equals(Object.keys(json.fields).length, 1, 'one field in response')
+          t.equals(json.fields.field, 'test', 'field = test')
+          t.equals(Object.keys(json.files).length, 1, 'one file in response')
+          t.equals(
+            json.files.license.name,
+            'LICENSE',
+            'license name is correct'
+          )
+          t.ok(json.files.license.path, 'path is set')
+          t.equals(
+            json.files.license.hash,
+            '4f54dcf7b324c315b2cc2831b6b442515c7437c2',
+            'license hash is correct'
+          )
+          t.equals(json.files.license.size, 1816, 'license size is correct')
+          resolve()
+        })
+      )
+      res.resume()
+    })
+  })
+})
+
+test('upload license file testing promise api', async t => {
+  const form = new FormData()
+  form.append('field', 'test')
+  form.append('license', fs.createReadStream('./LICENSE'), 'LICENSE')
+
+  const url = await listen(fnPromise)
 
   await new Promise((resolve, reject) => {
     form.submit(url, (err, res) => {

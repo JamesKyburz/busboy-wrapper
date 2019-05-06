@@ -12,9 +12,8 @@ http-server.js:
 
 ```javascript
 const busboy = require('busboy-wrapper')
-function upload (q, r) {
-  busboy(q, (err, fields, files, encoding, mimetype) => {
-  })
+async function upload (req, res) {
+  const { fields, files } = await busboy(req)
 }
 ```
 # install
