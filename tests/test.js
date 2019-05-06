@@ -1,4 +1,4 @@
-const { test } = require('tap')
+const tap = require('tap')
 const FormData = require('form-data')
 const fs = require('fs')
 const concat = require('concat-stream')
@@ -7,6 +7,12 @@ const listen = require('test-listen-destroy')
 const crypto = require('crypto')
 const http = require('http')
 const { parse: urlParse } = require('url')
+
+tap.cleanSnapshot = s => {
+  return s.replace(/"path":"[^"]*"/g, 'temporary-path')
+}
+
+const { test } = tap
 
 const fn = (req, res, opt = {}) => {
   busboy(req, opt, (err, payload) => {
@@ -42,22 +48,7 @@ test('upload license file', async t => {
       t.equals(res.statusCode, 200, 'server response is 200')
       res.pipe(
         concat(result => {
-          const json = JSON.parse(result)
-          t.equals(Object.keys(json.fields).length, 1, 'one field in response')
-          t.equals(json.fields.field, 'test', 'field = test')
-          t.equals(Object.keys(json.files).length, 1, 'one file in response')
-          t.equals(
-            json.files.license.name,
-            'LICENSE',
-            'license name is correct'
-          )
-          t.ok(json.files.license.path, 'path is set')
-          t.equals(
-            json.files.license.hash,
-            '4f54dcf7b324c315b2cc2831b6b442515c7437c2',
-            'license hash is correct'
-          )
-          t.equals(json.files.license.size, 1816, 'license size is correct')
+          t.matchSnapshot(result.toString())
           resolve()
         })
       )
@@ -79,22 +70,7 @@ test('upload license file testing promise api', async t => {
       t.equals(res.statusCode, 200, 'server response is 200')
       res.pipe(
         concat(result => {
-          const json = JSON.parse(result)
-          t.equals(Object.keys(json.fields).length, 1, 'one field in response')
-          t.equals(json.fields.field, 'test', 'field = test')
-          t.equals(Object.keys(json.files).length, 1, 'one file in response')
-          t.equals(
-            json.files.license.name,
-            'LICENSE',
-            'license name is correct'
-          )
-          t.ok(json.files.license.path, 'path is set')
-          t.equals(
-            json.files.license.hash,
-            '4f54dcf7b324c315b2cc2831b6b442515c7437c2',
-            'license hash is correct'
-          )
-          t.equals(json.files.license.size, 1816, 'license size is correct')
+          t.matchSnapshot(result.toString())
           resolve()
         })
       )
@@ -116,11 +92,7 @@ test('multipart with fields and no file', async t => {
       t.equals(res.statusCode, 200, 'server response is 200')
       res.pipe(
         concat(result => {
-          const json = JSON.parse(result)
-          t.equals(Object.keys(json.fields).length, 2, 'two fields in response')
-          t.equals(json.fields.field1, 'test1', 'field1 = test1')
-          t.equals(json.fields.field2, 'test2', 'field2 = test2')
-          t.equals(Object.keys(json.files).length, 0, 'no files in response')
+          t.matchSnapshot(result.toString())
           resolve()
         })
       )
@@ -142,37 +114,7 @@ test('upload 2 files', async t => {
       t.equals(res.statusCode, 200, 'server response is 200')
       res.pipe(
         concat(result => {
-          const json = JSON.parse(result)
-          t.equals(Object.keys(json.fields).length, 0, 'no fields in response')
-          t.equals(Object.keys(json.files).length, 2, 'two files in response')
-          t.ok(json.files.license.path, 'license path is set')
-          t.equals(
-            json.files.license.name,
-            'LICENSE',
-            'license name is correct'
-          )
-          t.equals(
-            json.files.license.hash,
-            '4f54dcf7b324c315b2cc2831b6b442515c7437c2',
-            'license hash is correct'
-          )
-          t.equals(json.files.license.size, 1816, 'license size is correct')
-          t.equals(
-            json.files['.gitignore'].name,
-            '.gitignore',
-            '.gitignore name is correct'
-          )
-          t.ok(json.files['.gitignore'].path, '.gitignore path is set')
-          t.equals(
-            json.files['.gitignore'].hash,
-            '5deb8ce2d089fb11d9be6ab1e839f3a719a55915',
-            '.gitignore hash is correct'
-          )
-          t.equals(
-            json.files['.gitignore'].size,
-            49,
-            '.gitignore size is correct'
-          )
+          t.matchSnapshot(result.toString())
           resolve()
         })
       )
@@ -203,29 +145,7 @@ test('encoding and mimetype', async t => {
       t.equals(res.statusCode, 200, 'server response is 200')
       res.pipe(
         concat(result => {
-          const json = JSON.parse(result)
-          t.equals(
-            json.files['license'].mimetype,
-            'application/octet-stream',
-            'license mimetype'
-          )
-          t.equals(
-            json.files['readme.markdown'].mimetype,
-            'text/markdown',
-            'readme mimetype'
-          )
-          t.equals(json.files['license'].encoding, '7bit', 'license mimetype')
-          t.equals(
-            json.files['readme.markdown'].encoding,
-            '7bit',
-            'readme mimetype'
-          )
-          t.equals(
-            json.files['image.jpg'].mimetype,
-            'image/jpeg',
-            'image mimetype'
-          )
-          t.equals(json.files['image.jpg'].encoding, '7bit', 'image mimetype')
+          t.matchSnapshot(result.toString())
           resolve()
         })
       )
@@ -298,12 +218,7 @@ test('custom hash with sha256', async t => {
       t.equals(res.statusCode, 200, 'server response is 200')
       res.pipe(
         concat(result => {
-          const json = JSON.parse(result)
-          t.equals(
-            json.files.license.hash,
-            'a48cdb5cf55019972cab469173b77bb8adf67e6c9757e428018c4255649856f2',
-            'license hash is correct'
-          )
+          t.matchSnapshot(result.toString())
           resolve()
         })
       )
