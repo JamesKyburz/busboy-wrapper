@@ -11,7 +11,7 @@
     "email": "james.kyburz@gmail.com"
   },
   "main": "src/index.js",
-  "version": "1.3.4",
+  "version": "2.0.0",
   "scripts": {
     "missing": "npx dependency-sync@latest src/index.js --debug --once",
     "prepublishOnly": "npx standard@latest",
