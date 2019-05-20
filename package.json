@@ -31,7 +31,7 @@
     "form-data": "2.3.3",
     "ssri": "6.0.1",
     "standard": "10.0.3",
-    "tap": "14.0.0",
+    "tap": "14.1.1",
     "test-listen-destroy": "1.0.0"
   },
   "license": "MIT"
