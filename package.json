@@ -28,7 +28,7 @@
   ],
   "devDependencies": {
     "concat-stream": "2.0.0",
-    "form-data": "2.3.3",
+    "form-data": "2.4.0",
     "ssri": "6.0.1",
     "tap": "14.2.3",
     "test-listen-destroy": "1.0.0"
