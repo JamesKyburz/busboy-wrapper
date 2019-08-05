@@ -6,7 +6,6 @@ const busboy = require('../')
 const listen = require('test-listen-destroy')
 const crypto = require('crypto')
 const http = require('http')
-const { parse: urlParse } = require('url')
 
 tap.cleanSnapshot = s => {
   return s.replace(/"path":"[^"]*"/g, 'temporary-path')
@@ -231,9 +230,8 @@ test('corrupt multipart', async t => {
   const url = await listen(fn)
 
   await new Promise((resolve, reject) => {
-    const request = http.request(
+    const request = http.request(url,
       {
-        ...urlParse(url),
         method: 'POST',
         headers: {
           'content-type': 'multipart/form-data; boundar'
