@@ -228,10 +228,12 @@ test('custom hash with sha256', async t => {
 
 test('corrupt multipart', async t => {
   const url = await listen(fn)
+  const port = url.split(':').slice(-1)[0]
 
   await new Promise((resolve, reject) => {
-    const request = http.request(url,
+    const request = http.request(
       {
+        port,
         method: 'POST',
         headers: {
           'content-type': 'multipart/form-data; boundar'
