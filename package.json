@@ -33,5 +33,10 @@
     "tap": "14.6.7",
     "test-listen-destroy": "1.0.0"
   },
+  "standard": {
+    "ignore": [
+      "tap-snapshots"
+    ]
+  },
   "license": "MIT"
 }
