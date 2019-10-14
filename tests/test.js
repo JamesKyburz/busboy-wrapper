@@ -24,13 +24,22 @@ const fn = (req, res, opt = {}) => {
   })
 }
 
+const fnWithNoOptions = (req, res) => {
+  busboy(req, (_, payload) => {
+    res.end(JSON.stringify(payload))
+  })
+}
+
 const fnPromise = (req, res, opt = {}) => {
-  busboy(req, opt)
-    .then(payload => res.end(JSON.stringify(payload)))
+  busboy(req, opt).then(payload => res.end(JSON.stringify(payload)))
     .catch(err => {
       res.writeHead(500)
-      res.end(err.toString())
+      res.end(err.message)
     })
+}
+
+const fnPromiseWithNoOptions = (req, res) => {
+  busboy(req).then(payload => res.end(JSON.stringify(payload)))
 }
 const ssri = require('ssri')
 
@@ -43,7 +52,7 @@ test('upload license file', async t => {
 
   await new Promise((resolve, reject) => {
     form.submit(url, (err, res) => {
-      if (err) return reject(err)
+      t.error(err)
       t.equals(res.statusCode, 200, 'server response is 200')
       res.pipe(
         concat(result => {
@@ -52,6 +61,84 @@ test('upload license file', async t => {
         })
       )
       res.resume()
+    })
+  })
+})
+
+test('license file from memory', async t => {
+  const form = new FormData()
+  form.append('field', 'test')
+  form.append('license', fs.readFileSync('./LICENSE'))
+
+  const url = await listen(fn)
+
+  await new Promise((resolve, reject) => {
+    form.submit(url, (err, res) => {
+      t.error(err)
+      t.equals(res.statusCode, 200, 'server response is 200')
+      res.pipe(
+        concat(result => {
+          t.matchSnapshot(result.toString())
+          resolve()
+        })
+      )
+      res.resume()
+    })
+  })
+})
+
+test('upload license file calling wrapper with no options', async t => {
+  const form = new FormData()
+  form.append('field', 'test')
+  form.append('license', fs.createReadStream('./LICENSE'), 'LICENSE')
+
+  const url = await listen(fnWithNoOptions)
+
+  await new Promise((resolve, reject) => {
+    form.submit(url, (err, res) => {
+      t.error(err)
+      t.equals(res.statusCode, 200, 'server response is 200')
+      res.pipe(
+        concat(result => {
+          t.matchSnapshot(result.toString())
+          resolve()
+        })
+      )
+      res.resume()
+    })
+  })
+})
+
+test("failure handling when path can't be written to", async t => {
+  const form = new FormData()
+  form.append('license', fs.createReadStream('./LICENSE'), 'LICENSE')
+  const url = await listen((req, res) =>
+    fn(req, res, { tempUploadDir: `/${Date.now().toString(32)}` })
+  )
+
+  await new Promise((resolve, reject) => {
+    form.submit(url, (err, res) => {
+      t.error(err)
+      t.equals(res.statusCode, 500, 'server response is 200')
+      res.resume()
+      resolve()
+    })
+  })
+})
+
+test("failure handling when path can't be written to using promise api", async t => {
+  const form = new FormData()
+  form.append('license', fs.createReadStream('./LICENSE'), 'LICENSE')
+  const url = await listen((req, res) =>
+    fnPromise(req, res, { tempUploadDir: `/${Date.now().toString(32)}` })
+  )
+
+  await new Promise((resolve, reject) => {
+    form.submit(url, (err, res) => {
+      t.error(err)
+      t.equals(res.statusCode, 500, 'server response is 200')
+      res.resume()
+      resolve()
     })
   })
 })
@@ -65,7 +152,29 @@ test('upload license file testing promise api', async t => {
 
   await new Promise((resolve, reject) => {
     form.submit(url, (err, res) => {
-      if (err) return reject(err)
+      t.error(err)
+      t.equals(res.statusCode, 200, 'server response is 200')
+      res.pipe(
+        concat(result => {
+          t.matchSnapshot(result.toString())
+          resolve()
+        })
+      )
+      res.resume()
+    })
+  })
+})
+
+test('upload license file testing promise api with no options', async t => {
+  const form = new FormData()
+  form.append('field', 'test')
+  form.append('license', fs.createReadStream('./LICENSE'), 'LICENSE')
+
+  const url = await listen(fnPromiseWithNoOptions)
+
+  await new Promise((resolve, reject) => {
+    form.submit(url, (err, res) => {
+      t.error(err)
       t.equals(res.statusCode, 200, 'server response is 200')
       res.pipe(
         concat(result => {
@@ -87,7 +196,7 @@ test('multipart with fields and no file', async t => {
 
   await new Promise((resolve, reject) => {
     form.submit(url, (err, res) => {
-      if (err) return reject(err)
+      t.error(err)
       t.equals(res.statusCode, 200, 'server response is 200')
       res.pipe(
         concat(result => {
@@ -109,7 +218,7 @@ test('upload 2 files', async t => {
 
   await new Promise((resolve, reject) => {
     form.submit(url, (err, res) => {
-      if (err) return reject(err)
+      t.error(err)
       t.equals(res.statusCode, 200, 'server response is 200')
       res.pipe(
         concat(result => {
@@ -140,7 +249,7 @@ test('encoding and mimetype', async t => {
 
   await new Promise((resolve, reject) => {
     form.submit(url, (err, res) => {
-      if (err) return reject(err)
+      t.error(err)
       t.equals(res.statusCode, 200, 'server response is 200')
       res.pipe(
         concat(result => {
@@ -179,7 +288,7 @@ test('custom hash with ssri', async t => {
 
   await new Promise((resolve, reject) => {
     form.submit(url, (err, res) => {
-      if (err) return reject(err)
+      t.error(err)
       t.equals(res.statusCode, 200, 'server response is 200')
       res.pipe(
         concat(result => {
@@ -213,7 +322,7 @@ test('custom hash with sha256', async t => {
 
   await new Promise((resolve, reject) => {
     form.submit(url, (err, res) => {
-      if (err) return reject(err)
+      t.error(err)
       t.equals(res.statusCode, 200, 'server response is 200')
       res.pipe(
         concat(result => {
