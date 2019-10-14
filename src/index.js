@@ -99,9 +99,15 @@ function wrapper (req, opt, cb) {
       !finished.written &&
       finished.parseComplete
     ) {
-      cb(null, { fields, files })
+      const sortedFiles = Object.keys(files)
+        .sort()
+        .reduce((sum, key) => {
+          sum[key] = files[key]
+          return sum
+        }, {})
+      cb(null, { fields, files: sortedFiles })
       finished.written = true
-      debug('%s completed %j', req.url, { fields: fields, files: files })
+      debug('%s completed %j', req.url, { fields, files: sortedFiles })
     }
   }
 
