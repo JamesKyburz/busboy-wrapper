@@ -15,13 +15,13 @@ function wrapper (req, opt, cb) {
     opt = {}
   }
 
-  opt = opt || {}
-
   if (!cb) {
     return new Promise((resolve, reject) =>
       wrapper(req, opt, (err, result) => (err ? reject(err) : resolve(result)))
     )
   }
+
+  opt = opt || {}
 
   cb = once(cb)
 
