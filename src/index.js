@@ -114,10 +114,7 @@ function wrapper (req, opt, cb) {
   req.pipe(busboy)
 
   function assertError (err) {
-    if (!err) return
     debug('%s error occured %j', req.url, err)
-    if (assertError.written) return
     cb(err)
-    assertError.written = true
   }
 }
