@@ -30,7 +30,7 @@
     "concat-stream": "2.0.0",
     "form-data": "2.5.1",
     "ssri": "7.1.0",
-    "tap": "14.9.2",
+    "tap": "14.10.0",
     "test-listen-destroy": "1.0.0"
   },
   "standard": {
