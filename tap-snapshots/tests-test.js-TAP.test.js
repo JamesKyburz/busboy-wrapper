@@ -14,7 +14,7 @@ exports[`tests/test.js TAP encoding and mimetype > must match snapshot 1`] = `
 `
 
 exports[`tests/test.js TAP license file from memory > must match snapshot 1`] = `
-{"fields":{"field":"test"},"files":{"license":{temporary-path,"size":1816,"hash":"4f54dcf7b324c315b2cc2831b6b442515c7437c2","encoding":"7bit","mimetype":"application/octet-stream"}}}
+{"fields":{"field":"test"},"files":{"LICENSE":{"name":"LICENSE",temporary-path,"size":1816,"hash":"4f54dcf7b324c315b2cc2831b6b442515c7437c2","encoding":"7bit","mimetype":"application/octet-stream"}}}
 `
 
 exports[`tests/test.js TAP multipart with fields and no file > must match snapshot 1`] = `

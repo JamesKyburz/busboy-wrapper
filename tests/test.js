@@ -68,7 +68,7 @@ test('upload license file', async t => {
 test('license file from memory', async t => {
   const form = new FormData()
   form.append('field', 'test')
-  form.append('license', fs.readFileSync('./LICENSE'))
+  form.append('LICENSE', fs.readFileSync('./LICENSE'))
 
   const url = await listen(fn)
 
