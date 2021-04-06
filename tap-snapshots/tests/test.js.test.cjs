@@ -10,7 +10,7 @@ exports[`tests/test.js TAP custom hash with sha256 > must match snapshot 1`] = `
 `
 
 exports[`tests/test.js TAP encoding and mimetype > must match snapshot 1`] = `
-{"fields":{},"files":{"image.jpg":{"name":"image.jpg",temporary-path,"size":285,"hash":"d61302ba02a43ee2c9c6b4e4b254b60092434635","encoding":"7bit","mimetype":"image/jpeg"},"license":{"name":"LICENSE",temporary-path,"size":1816,"hash":"4f54dcf7b324c315b2cc2831b6b442515c7437c2","encoding":"7bit","mimetype":"application/octet-stream"},"readme.markdown":{"name":"readme.markdown",temporary-path,"size":875,"hash":"3464ea4de49b1283ed3289e931d20a612a6dafbf","encoding":"7bit","mimetype":"text/markdown"}}}
+{"fields":{},"files":{"image.jpg":{"name":"image.jpg",temporary-path,"size":285,"hash":"d61302ba02a43ee2c9c6b4e4b254b60092434635","encoding":"7bit","mimetype":"image/jpeg"},"license":{"name":"LICENSE",temporary-path,"size":1816,"hash":"4f54dcf7b324c315b2cc2831b6b442515c7437c2","encoding":"7bit","mimetype":"application/octet-stream"},"readme.markdown":{"name":"readme.markdown",temporary-path,"size":765,"hash":"ed2d17109bedbd2864eeafc23992a8cf02686442","encoding":"7bit","mimetype":"text/markdown"}}}
 `
 
 exports[`tests/test.js TAP license file from memory > must match snapshot 1`] = `
