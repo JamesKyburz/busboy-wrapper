@@ -19,18 +19,18 @@
   },
   "dependencies": {
     "busboy": "0.3.1",
-    "debug": "4.1.1",
+    "debug": "4.3.1",
     "once": "1.4.0",
-    "uuid": "3.3.3"
+    "uuid": "8.3.2"
   },
   "files": [
     "src"
   ],
   "devDependencies": {
     "concat-stream": "2.0.0",
-    "form-data": "3.0.0",
-    "ssri": "7.1.0",
-    "tap": "14.10.6",
+    "form-data": "4.0.0",
+    "ssri": "8.0.1",
+    "tap": "15.0.2",
     "test-listen-destroy": "1.0.0"
   },
   "standard": {
